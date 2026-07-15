@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат-помощник</title>
+    <link rel="stylesheet" href="{% static 'css/widget.css' %}">
+</head>
+<body>
+
+    <!-- ===== КНОПКА ВЫЗОВА ===== -->
+    <button class="chat-toggle-btn" id="chatToggleBtn">💬</button>
+
+    <!-- ===== ОКНО ЧАТА (виджет) ===== -->
+    <div class="chat-widget" id="chatWidget">
+
+        <!-- Заголовок -->
+        <div class="chat-header">
+            <span class="title">🤖 AI Помощник</span>
+            <button class="chat-close" id="chatCloseBtn">✕</button>
+        </div>
+
+        <!-- ===== СОДЕРЖИМОЕ ЧАТА (include) ===== -->
+        <div class="chat-body">
+            {% include 'widget/chat_content.html' %}
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/widget.js' %}"></script>
+</body>
+</html>
