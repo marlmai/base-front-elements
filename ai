@@ -1,0 +1,11 @@
+from django.core.cache import caches
+
+class AIService:
+    def __init__(self):
+        # Пытаемся использовать Redis, если есть
+        if 'redis' in caches:
+            self.cache = caches['redis']
+            print("✅ Используется Redis")
+        else:
+            self.cache = caches['default']
+            print("ℹ️ Используется LocMemCache")
