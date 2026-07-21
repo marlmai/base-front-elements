@@ -1,0 +1,76 @@
+// static/js/chat.js
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const messagesContainer = document.getElementById('chatMessages');
+    const contextMenu = document.getElementById('contextMenu');
+    const clearChatBtn = document.getElementById('clearChatBtn');
+
+    // ===== ОТКРЫТИЕ КОНТЕКСТНОГО МЕНЮ =====
+    messagesContainer.addEventListener('contextmenu', function(e) {
+        e.preventDefault();  // отключаем стандартное меню браузера
+
+        // Показываем меню в месте клика
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = e.clientX + 'px';
+        contextMenu.style.top = e.clientY + 'px';
+    });
+
+    // ===== ЗАКРЫТИЕ МЕНЮ =====
+    function closeContextMenu() {
+        contextMenu.style.display = 'none';
+    }
+
+    // Закрыть по клику вне меню
+    document.addEventListener('click', function(e) {
+        if (!contextMenu.contains(e.target)) {
+            closeContextMenu();
+        }
+    });
+
+    // Закрыть по Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeContextMenu();
+        }
+    });
+
+    // ===== ОЧИСТКА ДИАЛОГА =====
+    clearChatBtn.addEventListener('click', function() {
+        // 1. Очищаем сообщения в DOM
+        messagesContainer.innerHTML = `
+            <div class="chat-empty">👋 Чем могу помочь?</div>
+        `;
+
+        // 2. (Опционально) Очищаем историю в БД через API
+        clearChatHistory();
+
+        // 3. Закрываем меню
+        closeContextMenu();
+
+        console.log('🗑️ Диалог очищен');
+    });
+
+    // ===== ОЧИСТКА ИСТОРИИ В БД (опционально) =====
+    async function clearChatHistory() {
+        try {
+            const response = await fetch('/api/chat/clear/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Token ' + getToken(),
+                },
+                body: JSON.stringify({
+                    session_id: currentSessionId,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('✅ История очищена в БД');
+            }
+        } catch (error) {
+            console.warn('⚠️ Ошибка очистки истории:', error);
+        }
+    }
+
+});
