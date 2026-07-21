@@ -1,0 +1,29 @@
+# settings/base.py
+
+import os
+from django.core.cache import caches
+
+# ===== ПЕРЕМЕННЫЕ ДЛЯ РЕДИС =====
+# Значение берётся из local.dev (или из переменной окружения)
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+CACHE_ENABLED = os.getenv('CACHE_ENABLED', 'False').lower() == 'true'
+
+# ===== КЭШ =====
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'local-cache',
+        'TIMEOUT': 900,
+    }
+}
+
+# Если Redis включён — добавляем его как отдельный кэш
+if CACHE_ENABLED:
+    CACHES['redis'] = {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'TIMEOUT': 3600,
+    }
